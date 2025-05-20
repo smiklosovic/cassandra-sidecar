@@ -68,6 +68,9 @@ public class SystemAuthDatabaseAccessor extends DatabaseAccessor<SystemAuthSchem
      */
     public String findRoleFromIdentity(String identity)
     {
+        if (!tableSchema.isSchemaAvailable())
+            return null;
+        
         BoundStatement statement = tableSchema.roleFromIdentity().bind(identity);
         ResultSet result = execute(statement);
         Row row = result.one();
@@ -81,6 +84,9 @@ public class SystemAuthDatabaseAccessor extends DatabaseAccessor<SystemAuthSchem
      */
     public Map<String, String> findAllIdentityToRoles()
     {
+        if (!tableSchema.isSchemaAvailable())
+            return Map.of();
+
         BoundStatement statement = tableSchema.allRolesAndIdentities().bind();
         ResultSet resultSet = execute(statement);
         Map<String, String> results = new HashMap<>();

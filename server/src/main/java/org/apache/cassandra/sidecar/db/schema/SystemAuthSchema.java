@@ -71,14 +71,12 @@ public class SystemAuthSchema extends CassandraSystemTableSchema
     @NotNull
     public PreparedStatement roleFromIdentity()
     {
-        ensureSchemaAvailable();
         return roleFromIdentity;
     }
 
     @NotNull
     public PreparedStatement allRolesAndIdentities()
     {
-        ensureSchemaAvailable();
         return allRolesAndIdentities;
     }
 
@@ -97,12 +95,9 @@ public class SystemAuthSchema extends CassandraSystemTableSchema
         return allRoles;
     }
 
-    protected void ensureSchemaAvailable() throws SchemaUnavailableException
+    public boolean isSchemaAvailable() throws SchemaUnavailableException
     {
-        if (roleFromIdentity == null || allRolesAndIdentities == null)
-        {
-            throw new SchemaUnavailableException(keyspaceName(), IDENTITY_TO_ROLE_TABLE);
-        }
+        return roleFromIdentity != null && allRolesAndIdentities != null;
     }
 
     @Override
