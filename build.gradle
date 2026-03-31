@@ -211,7 +211,6 @@ run {
                "-Dsidecar.config=" + confFile,
                "-Dlogback.configurationFile=./conf/logback.xml",
                "-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory"]
-    jvmArgs += project.ext.JDK11_OPTIONS
 }
 
 distributions {

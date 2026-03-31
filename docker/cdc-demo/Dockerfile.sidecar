@@ -1,0 +1,59 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Two-stage build: Stage 1 compiles via Gradle installDist; Stage 2 copies
+# the assembled distribution into a lean JRE image.
+# Usage: docker build -f docker/cdc-demo/Dockerfile.sidecar -t cassandra-sidecar:dev .
+
+# ── Stage 1: build ───────────────────────────────────────────────────────────
+FROM eclipse-temurin:11-jdk-jammy AS builder
+
+WORKDIR /build
+
+# Build descriptors first — keeps the dependency-download layer cached separately.
+COPY gradlew gradlew
+COPY gradle/  gradle/
+COPY gradle.properties settings.gradle build.gradle ./
+COPY adapters/        adapters/
+COPY client/          client/
+COPY client-common/   client-common/
+COPY docs/            docs/
+COPY server-common/   server-common/
+COPY vertx-auth-mtls/ vertx-auth-mtls/
+COPY vertx-client/    vertx-client/
+COPY vertx-client-shaded/ vertx-client-shaded/
+COPY server/          server/
+COPY conf/            conf/
+
+# Output: build/install/apache-cassandra-sidecar/{bin,lib,agents,conf}
+RUN --mount=type=cache,target=/root/.gradle \
+    ./gradlew installDist -x test -x integrationTest -x containerTest \
+      --no-daemon --parallel --quiet
+
+# ── Stage 2: runtime ─────────────────────────────────────────────────────────
+FROM eclipse-temurin:11-jre-jammy
+
+WORKDIR /app
+
+COPY --from=builder /build/build/install/apache-cassandra-sidecar/ ./
+
+# Bake demo config; docker-compose overrides at runtime via volume mount.
+COPY docker/cdc-demo/conf/sidecar.yaml /app/conf/sidecar.yaml
+
+EXPOSE 9043
+
+ENTRYPOINT ["/app/bin/cassandra-sidecar"]

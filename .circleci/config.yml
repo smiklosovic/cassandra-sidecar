@@ -74,7 +74,7 @@ jobs:
   # Runs java 11 tests on a docker image
   unit_java11:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     resource_class: large
     steps:
       - setup_remote_docker
@@ -97,7 +97,7 @@ jobs:
 
   build-dtest-jdk11:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     resource_class: large
     steps:
       - install_common
@@ -117,7 +117,7 @@ jobs:
 
   integration_cassandra_40_java11:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     environment:
       INTEGRATION_MAX_PARALLEL_FORKS: 3
       INTEGRATION_MAX_HEAP_SIZE: "2500M"
@@ -143,7 +143,7 @@ jobs:
 
   integration_heavy_cassandra_40_java11:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     environment:
       INTEGRATION_MAX_PARALLEL_FORKS: 3
       INTEGRATION_MAX_HEAP_SIZE: "3600M"
@@ -172,7 +172,7 @@ jobs:
 
   integration_cassandra_50_java11:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     environment:
       INTEGRATION_MAX_PARALLEL_FORKS: 3
       INTEGRATION_MAX_HEAP_SIZE: "2500M"
@@ -198,7 +198,7 @@ jobs:
 
   integration_heavy_cassandra_50_java11:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     environment:
       INTEGRATION_MAX_PARALLEL_FORKS: 3
       INTEGRATION_MAX_HEAP_SIZE: "3600M"
@@ -227,7 +227,7 @@ jobs:
 
   integration_cassandra_trunk_java11:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     environment:
       INTEGRATION_MAX_PARALLEL_FORKS: 3
       INTEGRATION_MAX_HEAP_SIZE: "2500M"
@@ -253,7 +253,7 @@ jobs:
 
   integration_heavy_cassandra_trunk_java11:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     environment:
       INTEGRATION_MAX_PARALLEL_FORKS: 3
       INTEGRATION_MAX_HEAP_SIZE: "3600M"
@@ -283,7 +283,7 @@ jobs:
   # ensures we can build and install deb packages
   deb_build_install:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     steps:
       - install_common
       - checkout
@@ -299,7 +299,7 @@ jobs:
   # ensures we can build and install rpm packages
   rpm_build_install:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     steps:
       - run: sudo apt-get update && sudo apt install dnf
       - checkout
@@ -313,7 +313,7 @@ jobs:
 
   docker_build:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     steps:
       - setup_remote_docker
       - checkout
@@ -321,7 +321,7 @@ jobs:
 
   docs_build:
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:11.0.22
     steps:
       - install_common
       - checkout
