@@ -35,6 +35,9 @@ echo "${JAVA_HOME}"
 # The container that runs the script has jdk11 installed only.
 # Setting the env var to build with jdk11.
 export CASSANDRA_USE_JDK11=true
+# Trunk (5.1-SNAPSHOT) compiles 2700+ source files; without an explicit heap
+# limit ant hits the JVM default (~2GB) and gets OOM-killed on large executors.
+export ANT_OPTS="${ANT_OPTS:-} -Xmx4g"
 ant realclean
 ant dtest-jar -Dno-checkstyle=true
 
