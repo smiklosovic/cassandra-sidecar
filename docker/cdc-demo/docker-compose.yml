@@ -53,6 +53,19 @@ services:
       timeout: 10s
       retries: 20
 
+  # ── Kafka init (one-shot) ────────────────────────────────────────────────────
+  # Pre-creates the CDC topic so it exists before the sidecar starts producing.
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - demo-network
+    entrypoint: ["/bin/bash", "-c",
+      "kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic cdc-mutations --partitions 1 --replication-factor 1"]
+    restart: "no"
+
   # ── Cassandra ───────────────────────────────────────────────────────────────
   cassandra:
     image: cassandra:${CASSANDRA_VERSION:-5.0}
@@ -131,6 +144,8 @@ services:
       dockerfile: docker/cdc-demo/Dockerfile.sidecar
     depends_on:
       cassandra-init:
+        condition: service_completed_successfully
+      kafka-init:
         condition: service_completed_successfully
     network_mode: "service:cassandra"
     volumes:
